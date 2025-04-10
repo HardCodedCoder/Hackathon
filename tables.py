@@ -14,10 +14,8 @@ class Table:
             self.height
         )
 
-        # Load image and scale it
-        self.image = pygame.image.load("assets/table/table_transparent.png").convert_alpha()  # NOT convert_alpha()
-        self.image.set_colorkey((255, 255, 255))  # White becomes transparent
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.image = pygame.image.load("assets/table/table_trimmed_final.png").convert_alpha()
+        self.image = pygame.transform.smoothscale(self.image, (self.width, self.height))
 
     def draw(self, screen):
         screen.blit(self.image, self.rect.topleft)
