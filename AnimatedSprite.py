@@ -1,6 +1,7 @@
 import pygame
 
 class AnimatedSprite(pygame.sprite.Sprite):
+    
     def __init__(self, sheet_path, frame_width, frame_height, boundary_rect, pos=(0, 0), zoom=3):
         super().__init__()
         # Load the spritesheet
@@ -11,6 +12,9 @@ class AnimatedSprite(pygame.sprite.Sprite):
         self.zoom = zoom  # Factor to scale the sprite frames
         self.pos = pos
         self.boundary_rect = boundary_rect
+        
+        self.carrying_food = None
+        self.origin_buffet = None
         
         # Get the overall size of the spritesheet
         sheet_rect = self.spritesheet.get_rect()
@@ -108,7 +112,6 @@ class AnimatedSprite(pygame.sprite.Sprite):
         for table in tables:
             if table.collides_with(self.rect.inflate(-70, -70)):
                 self.rect = original_position
-                print("collision table")
                 break
 
         # Check collision with buffets.
@@ -116,5 +119,4 @@ class AnimatedSprite(pygame.sprite.Sprite):
             # We block movement if colliding with a buffet that hasn't been taken.
             if buffet.collides_with(self.rect.inflate(-70, -70)) and not buffet.taken:
                 self.rect = original_position
-                print("collision buffet")
                 break

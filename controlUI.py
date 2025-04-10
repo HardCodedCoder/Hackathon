@@ -17,6 +17,7 @@ class ControlUI:
         self.table = "-"
         self.food_ordered = "-"
         self.error_message = ""  # New attribute for error display
+        self.success_message = ""
         
         # define the control keys with the corresponding key icon
         self.controls = [
@@ -94,3 +95,10 @@ class ControlUI:
             error_surface = self.font.render(self.error_message, True, (255, 0, 0))  # red color for error
             error_rect = error_surface.get_rect(center=self.ui_rect.center)
             screen.blit(error_surface, error_rect)
+        
+        # Draw the success message, if any, below the error message.
+        if self.success_message:
+            success_surface = self.font.render(self.success_message, True, (0, 255, 0))  # green for success
+            # Position it slightly lower than the center.
+            success_rect = success_surface.get_rect(center=(self.ui_rect.centerx, self.ui_rect.centery + 50))
+            screen.blit(success_surface, success_rect)
