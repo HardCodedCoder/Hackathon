@@ -19,21 +19,24 @@ class Board:
         self.background_color = Board.WHITE
         self.game_area_color = Board.GREEN
         self.ui_area_color = Board.BLACK
-        
+        self.tile_image = pygame.image.load("assets/concepts/floor_tile.png").convert()
+        self.tile_image = pygame.transform.scale(self.tile_image, (50, 50))
+
     def draw(self, screen):
-        # Background
-        screen.fill(self.background_color)
-        
-        # Draw the game area (e.g., as a green rectangle)
-        pygame.draw.rect(screen, self.game_area_color, self.game_area_rect)
-        # Draw the UI area (bottom, as a black rectangle)
+        # Draw tile background in the game area
+        tile_w, tile_h = self.tile_image.get_size()
+        for x in range(self.game_area_rect.left, self.game_area_rect.right, tile_w):
+            for y in range(self.game_area_rect.top, self.game_area_rect.bottom, tile_h):
+                screen.blit(self.tile_image, (x, y))
+
+        # Draw the UI area (bottom, black rectangle)
         pygame.draw.rect(screen, self.ui_area_color, self.ui_area_rect)
-        
-        # Text in the game area
+
+        # Game area text
         font = pygame.font.SysFont(None, 36)
         game_text = font.render("Spielfeld", True, Board.WHITE)
         screen.blit(game_text, (self.game_area_rect.x + 20, self.game_area_rect.y + 20))
-        
-        # Text in the UI area
+
+        # UI text
         ui_text = font.render("", True, Board.WHITE)
         screen.blit(ui_text, (self.ui_area_rect.x + 20, self.ui_area_rect.y + 20))
