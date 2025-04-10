@@ -1,7 +1,7 @@
 import pygame
 import sys
 from board import Board
-from player import Player
+from AnimatedSprite import AnimatedSprite
 from controlUI import ControlUI
 from tables import Table 
 
@@ -30,15 +30,14 @@ def init_screen(width: int, height: int) -> pygame.Surface:
     pygame.display.set_caption("BUFFET BOT LOW BUDGET")
     return screen
 
-def init_player(board: Board) -> Player:
+def init_player(board: Board):
     """
     Initializes the player at the center of the game area.
     :param board: Board-Object holding the board data relevant for calculation
     """
-    player_width, player_height = 30, 30
-    initial_x = board.game_area_rect.centerx - player_width // 2
-    initial_y = board.game_area_rect.centery - player_height // 2
-    player = Player(initial_x, initial_y, player_width, player_height, board.game_area_rect)
+    player = AnimatedSprite("/Users/ginovalentinopensuni/Library/Mobile Documents/com~apple~CloudDocs/Hackathon/assets/player/Prototype_Character.png", 32, 32, pos=(board.game_area_rect.width / 2, board.game_area_rect.height / 2))
+    all_sprites = pygame.sprite.Group(player)
+    return all_sprites
     
 def init_controlUI(board: Board) -> ControlUI:
     """
@@ -50,7 +49,7 @@ def init_controlUI(board: Board) -> ControlUI:
     control_ui = ControlUI(board.ui_area_rect)
     return control_ui
 
-def run_gameloop(board: Board, player: Player, clock: pygame.time.Clock, screen: pygame.Surface, control_ui: ControlUI) -> None:
+def run_gameloop(board: Board, player: pygame.sprite.Group, clock: pygame.time.Clock, screen: pygame.Surface, control_ui: ControlUI) -> None:
     running = True
     while running:
         clock.tick(FPS)
@@ -58,19 +57,36 @@ def run_gameloop(board: Board, player: Player, clock: pygame.time.Clock, screen:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
-        # Check 
-        keys = pygame.key.get_pressed()
-        if (player is not None):
-            player.update(keys)
-
         # Zeichne das Board und den Spieler
         
         board.draw(screen)
-        if (player is not None):
-            player.draw(screen)
-        control_ui.draw(screen)
+        keys = pygame.key.get_pressed()
+        moving = False
         
+        # Da 'player' eine Sprite-Gruppe ist, holen wir uns das erste Sprite
+        player_sprite = player.sprites()[0]
+        
+        if keys[pygame.K_LEFT]:
+            player_sprite.set_direction("left")
+            player_sprite.rect.x -= 5
+            moving = True
+        elif keys[pygame.K_RIGHT]:
+            player_sprite.set_direction("right")
+            player_sprite.rect.x += 5
+            moving = True
+        elif keys[pygame.K_UP]:
+            player_sprite.set_direction("up")
+            player_sprite.rect.y -= 5
+            moving = True
+        elif keys[pygame.K_DOWN]:
+            player_sprite.set_direction("down")
+            player_sprite.rect.y += 5
+            moving = True
+
+        # Aktualisiere alle Sprites in der Gruppe (übergibt 'moving' als Argument)
+        player.update(moving)
+        screen.fill((30,30,30))
+        player.draw(screen)
         pygame.display.flip()
 
 def main():
