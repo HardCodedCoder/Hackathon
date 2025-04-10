@@ -7,10 +7,11 @@ from player import Player
 from controlUI import ControlUI
 from tables import Table 
 from buffet import Buffet
+from AnimatedSprite import AnimatedSprite
 
 WIDTH = 1200
 HEIGHT = 800
-FPS = 60
+FPS = 40
 
 class BuffetFood(Enum):
     PIZZA = "Pizza"
@@ -28,11 +29,20 @@ def init_screen(width: int, height: int) -> pygame.Surface:
     pygame.display.set_caption("BUFFET BOT LOW BUDGET")
     return screen
 
-def init_player(board: Board) -> Player:
-    player_width, player_height = 30, 30
-    initial_x = board.game_area_rect.centerx - player_width // 2
-    initial_y = board.game_area_rect.centery - player_height // 2
-    return Player(initial_x, initial_y, player_width, player_height, board.game_area_rect)
+# def init_player(board: Board) -> Player:
+#     player_width, player_height = 30, 30
+#     initial_x = board.game_area_rect.centerx - player_width // 2
+#     initial_y = board.game_area_rect.centery - player_height // 2
+#     return Player(initial_x, initial_y, player_width, player_height, board.game_area_rect)
+
+def init_player(board: Board):
+    """
+    Initializes the player at the center of the game area.
+    :param board: Board-Object holding the board data relevant for calculation
+    """
+    player = AnimatedSprite("assets/player/Prototype_Character.png", 32, 32, board.game_area_rect, pos=(board.game_area_rect.width / 2, board.game_area_rect.height - 100))
+    all_sprites = pygame.sprite.Group(player)
+    return all_sprites
 
 def init_controlUI(board: Board) -> ControlUI:
     control_ui = ControlUI(board.ui_area_rect)
@@ -54,7 +64,7 @@ def init_buffets(board: Board) -> list:
         buffets.append(Buffet(buffet_rect, food.value))
     return buffets
 
-def run_gameloop(board: Board, player: Player, clock: pygame.time.Clock, 
+def run_gameloop(board: Board, player: AnimatedSprite, clock: pygame.time.Clock, 
                  screen: pygame.Surface, control_ui: ControlUI, 
                  buffets: list, tables: list) -> None:
     running = True
@@ -64,21 +74,25 @@ def run_gameloop(board: Board, player: Player, clock: pygame.time.Clock,
             if event.type == pygame.QUIT:
                 running = False
 
+        #player_sprite = player.sprites()[0]
         keys = pygame.key.get_pressed()
-        if player:
-            prev_pos = player.rect.topleft
+        
+        player_sprite = player.sprites()[0]
+        
+        if player_sprite:
+            prev_pos = player_sprite.rect.topleft
             # Now pass both tables and buffets to update().
-            player.update(keys, tables, buffets)
+            player_sprite.update(keys, tables, buffets)
             # Clear error message if movement keys are pressed or if player's position changed.
             if keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_s] or keys[pygame.K_d]:
                 control_ui.error_message = ""
-            elif player.rect.topleft != prev_pos:
+            elif player_sprite.rect.topleft != prev_pos:
                 control_ui.error_message = ""
 
         # Check for buffet interaction (when player presses "E")
         if keys[pygame.K_e]:
             for buffet in buffets:
-                if player.rect.colliderect(buffet.rect.inflate(20, 20)):
+                if player_sprite.rect.colliderect(buffet.rect.inflate(20, 20)):
                     if not buffet.taken:
                         if buffet.food == control_ui.food_ordered:
                             buffet.taken = True
@@ -95,6 +109,7 @@ def run_gameloop(board: Board, player: Player, clock: pygame.time.Clock,
             buffet.draw(screen)
         if player:
             player.draw(screen)
+            
         control_ui.draw(screen)
         pygame.display.flip()
 
