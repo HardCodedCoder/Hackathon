@@ -20,7 +20,7 @@ class Board:
         self.game_area_color = Board.GREEN
         self.ui_area_color = Board.BLACK
         self.tile_image = pygame.image.load("assets/concepts/floor_tile.png").convert()
-        self.tile_image = pygame.transform.scale(self.tile_image, (50, 50))
+        self.tile_image = pygame.transform.scale(self.tile_image, (200, 200))
 
     def draw(self, screen):
         # Draw tile background in the game area
