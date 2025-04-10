@@ -1,7 +1,7 @@
 import pygame
 import sys
 from board import Board
-from player import Player
+from AnimatedSprite import AnimatedSprite
 from controlUI import ControlUI
 from tables import Table 
 from buffet import Buffet
@@ -22,14 +22,15 @@ def init_screen(width: int, height: int) -> pygame.Surface:
     pygame.display.set_caption("BUFFET BOT LOW BUDGET")
     return screen
 
-
-def init_player(board: Board) -> Player:
-    player_width, player_height = 30, 30
-    initial_x = board.game_area_rect.centerx - player_width // 2
-    initial_y = board.game_area_rect.centery - player_height // 2
-    player = Player(initial_x, initial_y, player_width, player_height, board.game_area_rect)
-    return player
-
+def init_player(board: Board):
+    """
+    Initializes the player at the center of the game area.
+    :param board: Board-Object holding the board data relevant for calculation
+    """
+    player = AnimatedSprite("assets/player/Prototype_Character.png", 32, 32, pos=(board.game_area_rect.width / 2, board.game_area_rect.height / 2))
+    all_sprites = pygame.sprite.Group(player)
+    return all_sprites
+    
 def init_controlUI(board: Board) -> ControlUI:
     """
     Initializes the control UI.
@@ -53,7 +54,7 @@ def init_buffet(board: Board) -> Buffet:
     buffet_rect = pygame.Rect(buffet_x, buffet_y, buffet_width, buffet_height)
     return Buffet(buffet_rect, "Pizza")
 
-def run_gameloop(board: Board, player: Player, clock: pygame.time.Clock, 
+def run_gameloop(board: Board,  player: pygame.sprite.Group, clock: pygame.time.Clock, 
                  screen: pygame.Surface, control_ui: ControlUI, buffet: Buffet, tables: list) -> None:
     running = True
     while running:
