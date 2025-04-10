@@ -1,14 +1,12 @@
 import pygame
 
-
 class Table:
-    COLOR = (139, 69, 19)
-
     def __init__(self, grid_pos, cell_size):
         self.grid_pos = grid_pos
         self.cell_size = cell_size
         self.width = cell_size * 2
         self.height = cell_size
+
         self.rect = pygame.Rect(
             grid_pos[0] * cell_size,
             grid_pos[1] * cell_size,
@@ -16,15 +14,17 @@ class Table:
             self.height
         )
 
+        # Load image and scale it
+        self.image = pygame.image.load("assets/table/table_transparent.png").convert_alpha()  # NOT convert_alpha()
+        self.image.set_colorkey((255, 255, 255))  # White becomes transparent
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+
     def draw(self, screen):
-        pygame.draw.rect(screen, self.COLOR, self.rect)
-        font = pygame.font.SysFont(None, 24)
-        text = font.render("Table", True, (255, 255, 255))
-        screen.blit(text, (self.rect.x + 10, self.rect.y + 10))
+        screen.blit(self.image, self.rect.topleft)
 
     def get_blocking_pos(self):
         return [
-            (self.grid_pos[0] + 1, self.grid_pos[1]),
+            (self.grid_pos[0], self.grid_pos[1]),
             (self.grid_pos[0] + 1, self.grid_pos[1])
         ]
 
