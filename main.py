@@ -100,9 +100,9 @@ def main():
     # Create tables
     cell_size = 50
     tables = [
-        Table((4, 3), cell_size),
-        Table((8, 5), cell_size),
-        Table((12, 7), cell_size)
+        Table((4, 3), cell_size, table_number=1),
+        Table((8, 5), cell_size, table_number=2),
+        Table((12, 7), cell_size, table_number=3)
     ]
     for table in tables:
         table.draw(screen)
