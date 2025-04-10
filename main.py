@@ -7,7 +7,7 @@ from tables import Table
 
 WIDTH = 1200
 HEIGHT = 800
-FPS = 60
+FPS = 10
 
 def init_board(width: int, height: int) -> Board:
     """
@@ -35,7 +35,7 @@ def init_player(board: Board):
     Initializes the player at the center of the game area.
     :param board: Board-Object holding the board data relevant for calculation
     """
-    player = AnimatedSprite("/Users/ginovalentinopensuni/Library/Mobile Documents/com~apple~CloudDocs/Hackathon/assets/player/Prototype_Character.png", 32, 32, pos=(board.game_area_rect.width / 2, board.game_area_rect.height / 2))
+    player = AnimatedSprite("assets/player/Prototype_Character.png", 32, 32, pos=(board.game_area_rect.width / 2, board.game_area_rect.height / 2))
     all_sprites = pygame.sprite.Group(player)
     return all_sprites
     

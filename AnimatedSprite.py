@@ -1,29 +1,30 @@
 import pygame
 
 class AnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, sheet_path, frame_width, frame_height, pos=(0, 0)):
+    def __init__(self, sheet_path, frame_width, frame_height, pos=(0, 0), zoom=3):
         super().__init__()
-        # Spritesheet laden
+        # Load the spritesheet
         self.spritesheet = pygame.image.load(sheet_path).convert_alpha()
         
         self.frame_width = frame_width
         self.frame_height = frame_height
+        self.zoom = zoom  # Factor to scale the sprite frames
         self.pos = pos
 
-        # Gesamtgröße des Spritesheets
+        # Get the overall size of the spritesheet
         sheet_rect = self.spritesheet.get_rect()
         self.sheet_width, self.sheet_height = sheet_rect.size
         
-        # Anzahl der Spalten und Zeilen im Sheet
+        # Calculate the number of columns and rows in the sheet
         self.columns = self.sheet_width // self.frame_width
         self.rows = self.sheet_height // self.frame_height
         
-        # Wir gehen davon aus, dass die Reihen in folgender Reihenfolge vorliegen:
-        # Zeile 0: "down", Zeile 1: "left", Zeile 2: "right", Zeile 3: "up"
-        self.directions = ['down', 'left', 'right', 'up']
+        # We assume the rows are ordered as follows:
+        # Row 0: "down", Row 1: "left", Row 2: "right", Row 3: "up"
+        self.directions = ['down', 'right', 'up', 'left']
         self.animations = {}
         
-        # Frames jeweils für jede Richtung ausschneiden
+        # Extract frames for each direction
         for row in range(self.rows):
             if row < len(self.directions):
                 direction = self.directions[row]
@@ -34,23 +35,28 @@ class AnimatedSprite(pygame.sprite.Sprite):
                     frame_rect = pygame.Rect(x, y, self.frame_width, self.frame_height)
                     frame_image = pygame.Surface((self.frame_width, self.frame_height), pygame.SRCALPHA)
                     frame_image.blit(self.spritesheet, (0, 0), frame_rect)
+                    # Apply zoom scaling if necessary
+                    if zoom != 1:
+                        new_width = int(self.frame_width * zoom)
+                        new_height = int(self.frame_height * zoom)
+                        frame_image = pygame.transform.scale(frame_image, (new_width, new_height))
                     frames.append(frame_image)
                 self.animations[direction] = frames
         
-        # Startzustand: Standardrichtung "down"
+        # Initial state: default to "down"
         self.current_direction = 'down'
         self.frames = self.animations[self.current_direction]
         self.current_frame = 0
         self.image = self.frames[self.current_frame]
         self.rect = self.image.get_rect(topleft=self.pos)
         
-        # Animationseinstellungen
-        self.animation_speed = 150  # in Millisekunden pro Frame
+        # Animation settings
+        self.animation_speed = 1000  # in milliseconds per frame
         self.last_update = pygame.time.get_ticks()
 
     def set_direction(self, direction):
         """
-        Wechselt die Animation basierend auf der übergebenen Richtung.
+        Switches the animation based on the given direction.
         """
         if direction in self.animations and direction != self.current_direction:
             self.current_direction = direction
@@ -61,9 +67,9 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
     def update(self, moving=False):
         """
-        Aktualisiert die Animation.
-        Wird nur animiert (Frames wechseln), wenn moving True ist.
-        Ist moving False, wird der erste Frame der aktuellen Animation angezeigt.
+        Updates the animation.
+        Animation frame updates occur only when 'moving' is True.
+        If 'moving' is False, the first frame of the current animation is displayed.
         """
         now = pygame.time.get_ticks()
         if moving:
@@ -72,6 +78,6 @@ class AnimatedSprite(pygame.sprite.Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.frames)
                 self.image = self.frames[self.current_frame]
         else:
-            # Im Idle-Zustand einfach den ersten Frame anzeigen.
+            # In idle state just display the first frame.
             self.current_frame = 0
             self.image = self.frames[self.current_frame]
