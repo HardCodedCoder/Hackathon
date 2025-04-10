@@ -74,6 +74,8 @@ class AnimatedSprite(pygame.sprite.Sprite):
         """
         now = pygame.time.get_ticks()
         
+        original_position = self.rect.copy()
+        
         if keys[pygame.K_LEFT]:
             self.set_direction("left")
             self.rect.x -= 5
@@ -91,8 +93,6 @@ class AnimatedSprite(pygame.sprite.Sprite):
             self.last_update = now
             self.current_frame = (self.current_frame + 1) % len(self.frames)
             self.image = self.frames[self.current_frame]
-            
-        original_position = self.rect.copy()
 
         # Prevent leaving board boundaries.
         if self.rect.left < self.boundary_rect.left:
@@ -106,13 +106,15 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
         # Check collision with tables.
         for table in tables:
-            if table.collides_with(self.rect):
+            if table.collides_with(self.rect.inflate(-70, -70)):
                 self.rect = original_position
+                print("collision table")
                 break
 
         # Check collision with buffets.
         for buffet in buffets:
             # We block movement if colliding with a buffet that hasn't been taken.
-            if buffet.collides_with(self.rect) and not buffet.taken:
+            if buffet.collides_with(self.rect.inflate(-70, -70)) and not buffet.taken:
                 self.rect = original_position
+                print("collision buffet")
                 break

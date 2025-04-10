@@ -11,7 +11,7 @@ from AnimatedSprite import AnimatedSprite
 
 WIDTH = 1200
 HEIGHT = 800
-FPS = 60
+FPS = 40
 
 class BuffetFood(Enum):
     PIZZA = "Pizza"
@@ -40,7 +40,7 @@ def init_player(board: Board):
     Initializes the player at the center of the game area.
     :param board: Board-Object holding the board data relevant for calculation
     """
-    player = AnimatedSprite("assets/player/Prototype_Character.png", 32, 32, board.game_area_rect, pos=(board.game_area_rect.width / 2, board.game_area_rect.height / 2))
+    player = AnimatedSprite("assets/player/Prototype_Character.png", 32, 32, board.game_area_rect, pos=(board.game_area_rect.width / 2, board.game_area_rect.height - 100))
     all_sprites = pygame.sprite.Group(player)
     return all_sprites
 
