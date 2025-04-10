@@ -28,3 +28,12 @@ class Buffet:
         food_surface = font.render(self.food, True, (0, 0, 0))
         food_rect = food_surface.get_rect(center=self.rect.center)
         screen.blit(food_surface, food_rect)
+
+    def collides_with(self, rect: pygame.Rect) -> bool:
+        """
+        Checks for collision between the buffet and the given rectangle.
+        
+        :param rect: A pygame.Rect to check collision with.
+        :return: True if the rectangles collide, False otherwise.
+        """
+        return self.rect.colliderect(rect)
