@@ -35,5 +35,5 @@ class Board:
         screen.blit(game_text, (self.game_area_rect.x + 20, self.game_area_rect.y + 20))
         
         # Text in the UI area
-        ui_text = font.render("UI Bereich", True, Board.WHITE)
+        ui_text = font.render("", True, Board.WHITE)
         screen.blit(ui_text, (self.ui_area_rect.x + 20, self.ui_area_rect.y + 20))
