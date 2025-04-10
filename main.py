@@ -8,6 +8,7 @@ from controlUI import ControlUI
 from tables import Table 
 from buffet import Buffet
 from AnimatedSprite import AnimatedSprite
+from easterEgg import EasterEgg
 
 WIDTH = 1200
 HEIGHT = 800
@@ -93,14 +94,18 @@ def init_buffets(board: Board, tables: list, player_rect: pygame.Rect) -> list:
 
 def run_gameloop(board: Board, player: AnimatedSprite, clock: pygame.time.Clock, 
                  screen: pygame.Surface, control_ui: ControlUI, 
-                 buffets: list, tables: list) -> None:
+                 buffets: list, tables: list, easteregg: EasterEgg) -> None:
     running = True
     while running:
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
+            elif event.type == pygame.KEYDOWN:
+                # Toggle the easter egg when "P" is pressed.
+                if event.key == pygame.K_p:
+                    easteregg.toggle()
+                    
         keys = pygame.key.get_pressed()
         # Get the single player sprite from the group.
         player_sprite = player.sprites()[0]
@@ -160,6 +165,9 @@ def run_gameloop(board: Board, player: AnimatedSprite, clock: pygame.time.Clock,
                             control_ui.error_message = "Wrong table!"
                         break  # Process one table interaction per press.
 
+        # Update the easter egg (slide it in/out)
+        easteregg.update()
+
         # Draw the game objects.
         board.draw(screen)
         for table in tables:
@@ -169,6 +177,8 @@ def run_gameloop(board: Board, player: AnimatedSprite, clock: pygame.time.Clock,
         if player:
             player.draw(screen)
         control_ui.draw(screen)
+        easteregg.draw(screen)
+        
         pygame.display.flip()
 
 
@@ -205,8 +215,11 @@ def main():
     ordered_food = random.choice(list(BuffetFood)).value
     controlUI.food_ordered = ordered_food
 
+    # Create the EasterEgg instance.
+    easteregg = EasterEgg(WIDTH, HEIGHT, margin=50, speed=10)
+
     run_gameloop(board=board, player=player_group, clock=clock, screen=screen, 
-                 control_ui=controlUI, buffets=buffets, tables=tables)
+                 control_ui=controlUI, buffets=buffets, tables=tables, easteregg=easteregg)
 
     pygame.quit()
     sys.exit()
