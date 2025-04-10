@@ -39,7 +39,8 @@ def init_player(board: Board) -> Player:
     initial_x = board.game_area_rect.centerx - player_width // 2
     initial_y = board.game_area_rect.centery - player_height // 2
     player = Player(initial_x, initial_y, player_width, player_height, board.game_area_rect)
-    
+    return player
+
 def init_controlUI(board: Board) -> ControlUI:
     """
     Initializes the control UI.
