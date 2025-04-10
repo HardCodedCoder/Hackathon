@@ -11,7 +11,7 @@ from AnimatedSprite import AnimatedSprite
 
 WIDTH = 1200
 HEIGHT = 800
-FPS = 40
+FPS = 60
 
 class BuffetFood(Enum):
     PIZZA = "Pizza"
